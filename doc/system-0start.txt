@@ -1,0 +1,9 @@
+启动开发环境
+=========
+# cd /var/www && ln -s /your/path/to/moon/voov voov
+# cd /var/www/voov/xport; make install
+$ cd /var/www/voov/pager; 执行需要生成页面的工具，例如： ./static
+$ mkdir /var/log/moon/voov
+$ killall mevent; sleep 1; /var/www/voov/xport/daemon/mevent -c /var/www/voov/xport/conf/server.hdf
+
+# /etc/init.d/lighttpd start (仅以lighttpd为例，其他web服务器请自行处理)

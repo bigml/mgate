@@ -1,0 +1,75 @@
+安装lighttpd
+
+
+修改 lighttpd.conf
++mod_rewrite
++mod_expire
++mod_vhost
++mod_fcgi
++mod_cgi
+
+
+(开发模式)
+    ...10-simple-vhost.conf
+    $HTTP["host"] == "www.voov.org" {
+      server.document-root = "/var/www/voov/fly/"
+      url.rewrite-once= ("^/([^\.\?]+[^\/])$" => "/run/viki?ScriptName=$1",
+                         "^/([^\.]+)\?(.*[^\/])$"   => "/run/viki?ScriptName=$1&$2")
+      $HTTP["url"] =~ "^/run/" {
+            cgi.assign = ( "" => "" )
+      }
+    }
+
+
+(线上模式)
+    ...10-simple-vhost.conf
+    $HTTP["host"] == "www.voov.org" {
+      server.document-root = "/var/www/voov/fly/"
+      url.rewrite-once= ("^/([^\.\?]+[^\/])$" => "/run/viki?ScriptName=$1",
+                         "^/([^\.]+)\?(.*[^\/])$"   => "/run/viki?ScriptName=$1&$2")
+      $HTTP["url"] =~ "^/img/.*" {
+         expire.url = ( "" => "access 30 days" )
+      }
+      $HTTP["url"] =~ "^/obj/.*" {
+         expire.url = ( "" => "access 30 days" )
+      }
+      $HTTP["url"] =~ "^/pic/.*" {
+         expire.url = ( "" => "access 30 days" )
+      }
+      $HTTP["url"] =~ "^.*\.html$" {
+         expire.url = ( "" => "access 1 days" )
+      }
+      $HTTP["url"] =~ "^.*\.js$" {
+         expire.url = ( "" => "access 1 days" )
+      }
+      $HTTP["url"] =~ "^.*\.css$" {
+         expire.url = ( "" => "access 1 days" )
+      }
+    }
+
+    $HTTP["host"] == "js.voov.org" {
+      server.document-root = "/var/www/voov/fly/js/"
+      expire.url = ("" => "access 1 days")
+    }
+
+    $HTTP["host"] == "css.voov.org" {
+      server.document-root = "/var/www/voov/fly/css/"
+      expire.url = ("" => "access 1 days")
+    }
+
+    #mkdir -p /var/run/lighttpd/sockets/ && chown www-data /var/run/lighttpd/sockets/
+
+    ...10-fastcgi.conf
+    var.socket_dir = "/var/run/lighttpd/sockets/"
+    fastcgi.server = ("viki" =>
+        ( "viki" =>
+            (
+                "socket" => socket_dir + "viki",
+                "check-local" => "disable",
+                "bin-path" => "/var/www/voov/run/viki",
+                "min-procs" => 1,
+                "max-procs" => 60,
+                "idle-timeout" => 30
+            )
+        )
+    )
