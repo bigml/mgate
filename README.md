@@ -37,6 +37,7 @@ as possible(3 days for a milk farmer's site), mgate is not suitable for you.
     ├── run         controller. dynamic web page/interface handler. just a viki cgi.
     ├
     ├── mevent      model(for high concurrency). refer mevent/README for further info.
+    ├── xport       mevent local plugin.
     ├
     ├── tpl         html templates directory. commonly used by run/ and pager/
     ├── pager       tools produce static html. like cms.
