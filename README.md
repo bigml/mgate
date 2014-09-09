@@ -45,10 +45,10 @@ as possible(3 days for a milk farmer's site), mgate is not suitable for you.
 
 #### how to begin ####
 
-1. git clone --recursive git://github.com/bigml/mgate.git PROJNAME
-2. cd PROJNAME; sed -i 's/voov/PROJNAME/g' `grep -rl voov .`
+1. git clone --recursive https://github.com/bigml/mgate.git mgate
+2. cd mgate; sed -i 's/voov/PROJNAME/g' `grep -rl voov .`
 3. find -name '\*voov\*'; rename them
-4. mkdir -p /var/log/moon/PROJNAME/; chmod 777 /var/log/moon/PROJNAME/
+4. mkdir -p /var/log/moon/mgate/; chmod 777 /var/log/moon/mgate/
 5. refer doc/system-*.txt for how mgate work, and how config it
 6. refer mevent/README, mevent/mbase/README to begin develop
 

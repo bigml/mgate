@@ -1,0 +1,3 @@
+[submodule "mevent"]
+	path = mevent
+	url = git@github.com:bigml/mevent.git

@@ -2,7 +2,7 @@ LOCALBASE = ./
 include $(LOCALBASE)Make.env
 include $(BASEDIR)Make.env
 
-SUBDIR = xport pub walk run pager mtl fly
+SUBDIR = mevent pub walk run pager mtl fly
 
 all: $(SUBDIR)
 	@$(MULTIMAKE) $(SUBDIR)
