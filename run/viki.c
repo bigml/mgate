@@ -23,13 +23,14 @@ int main(int argc, char **argv, char **envp)
 
     //sleep(20);
     mutil_makesure_coredump();
+
+    err = mcfg_parse_file(SITE_CONFIG, &g_cfg);
+    DIE_NOK_CGI(err);
+
     mtc_init(TC_ROOT"viki",
              hdf_get_int_value(g_cfg, PRE_CONFIG".trace_level", TC_DEFAULT_LEVEL));
 
     err = lerr_init();
-    DIE_NOK_CGI(err);
-
-    err = mcfg_parse_file(SITE_CONFIG, &g_cfg);
     DIE_NOK_CGI(err);
 
     err = mtpl_set_tplpath(PATH_TPL);
@@ -106,6 +107,20 @@ int main(int argc, char **argv, char **envp)
 
     response:
         if (cgi != NULL && cgi->hdf != NULL) {
+            /*
+             * handle uri redirect
+             */
+            if (nerr_match(err, LERR_REDIRECT)) {
+                temps = hdf_get_value(cgi->hdf, PRE_OUTPUT".302", NULL);
+                if (temps) {
+                    cgi_redirect_uri(cgi, "%s", temps);
+                } else {
+                    cgi_redirect(cgi, "/");
+                }
+                nerr_ignore(&err);
+                goto resp_done;
+            }
+
             lerr_opfinish_json(err, cgi->hdf);
 
             if (!session) session = session_default();
@@ -147,6 +162,7 @@ int main(int argc, char **argv, char **envp)
                 break;
             }
 
+        resp_done:
 #ifdef DEBUG_HDF
             hdf_write_file(cgi->hdf, TC_ROOT"hdf.viki");
 #endif

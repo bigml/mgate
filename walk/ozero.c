@@ -17,7 +17,9 @@ NEOERR* zero_data_add(CGI *cgi, HASH *dbh, HASH *evth, session_t *ses)
 
     MCS_NOT_NULLB(cgi->hdf, evt);
 
-    return STATUS_OK;
+    hdf_set_value(cgi->hdf, PRE_OUTPUT".302=http://www.google.cn/");
+
+    return nerr_raise(LERR_REDIRECT, "redirect");
 }
 
 NEOERR* zero_image_data_add(CGI *cgi, HASH *dbh, HASH *evth, session_t *ses)
@@ -25,12 +27,12 @@ NEOERR* zero_image_data_add(CGI *cgi, HASH *dbh, HASH *evth, session_t *ses)
     char fname[LEN_MD5];
     int ftype;
 	NEOERR *err;
-    
+
     err = mimg_accept(cgi, "upfile", ROOT_IMG, fname, &ftype);
 	if (err != STATUS_OK) return nerr_pass(err);
-    
+
     char tok[3] = {0}; strncpy(tok, fname, 2);
-    
+
     hdf_set_valuef(cgi->hdf, PRE_OUTPUT".imageurl=%s%s/%s.%s",
                    URL_IMG, tok, fname, mimg_type_int2str(ftype));
     hdf_set_valuef(cgi->hdf, PRE_OUTPUT".imagename=%s.%s",

@@ -12,6 +12,7 @@ int LERR_LIMIT     = 0;            /* 27 */
 int LERR_MISS_DATA = 0;            /* 28 */
 int LERR_MISS_TPL  = 0;            /* 29 */
 int LERR_ATTACK    = 0;            /* 30 */
+int LERR_REDIRECT  = 0;            /* 31 */
 
 /*
  * mevent plugin error
@@ -52,6 +53,8 @@ NEOERR* lerr_init()
         err = nerr_register(&LERR_MISS_TPL, "找不到渲染模板(忘记了/json ?)");
         if (err != STATUS_OK) return nerr_pass(err);
         err = nerr_register(&LERR_ATTACK, "太过频繁，请稍后请求！");
+        if (err != STATUS_OK) return nerr_pass(err);
+        err = nerr_register(&LERR_REDIRECT, "页面重定向！");
         if (err != STATUS_OK) return nerr_pass(err);
 
         err = nerr_register(&LERR_MEMBERED, "邮箱已被注册！");
