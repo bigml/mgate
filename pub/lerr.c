@@ -14,20 +14,6 @@ int LERR_MISS_TPL  = 0;            /* 29 */
 int LERR_ATTACK    = 0;            /* 30 */
 int LERR_REDIRECT  = 0;            /* 31 */
 
-/*
- * mevent plugin error
- */
-int LERR_MEMBERED = 0;
-int LERR_CARED = 0;
-int LERR_MEMBER_NEXIST = 0;
-int LERR_PLAN_NEXIST = 0;
-
-/*
- * app error
- */
-int LERR_USERINPUT = 0;
-int LERR_IMGPROE = 0;
-
 
 static int lerrInited = 0;
 
@@ -57,20 +43,6 @@ NEOERR* lerr_init()
         err = nerr_register(&LERR_REDIRECT, "页面重定向！");
         if (err != STATUS_OK) return nerr_pass(err);
 
-        err = nerr_register(&LERR_MEMBERED, "邮箱已被注册！");
-        if (err != STATUS_OK) return nerr_pass(err);
-        err = nerr_register(&LERR_CARED, "一个帐户只能拥有一辆车！");
-        if (err != STATUS_OK) return nerr_pass(err);
-        err = nerr_register(&LERR_MEMBER_NEXIST, "用户不存在");
-        if (err != STATUS_OK) return nerr_pass(err);
-        err = nerr_register(&LERR_PLAN_NEXIST, "路线不存在");
-        if (err != STATUS_OK) return nerr_pass(err);
-
-        err = nerr_register(&LERR_USERINPUT, "输入参数错误");
-        if (err != STATUS_OK) return nerr_pass(err);
-        err = nerr_register(&LERR_IMGPROE, "处理图片失败");
-        if (err != STATUS_OK) return nerr_pass(err);
-
         lerrInited = 1;
     }
 
@@ -89,8 +61,7 @@ void lerr_opfinish_json(NEOERR *err, HDF *hdf)
 
     NEOERR *neede = mcs_err_valid(err);
     /* set PRE_ERRXXX with the most recently err */
-    hdf_set_int_value(hdf, PRE_ERRCODE, neede->error);
-    mcs_set_int_attr(hdf, PRE_ERRCODE, "type", CNODE_TYPE_INT);
+    mcs_set_int_value_with_type(hdf, PRE_ERRCODE, neede->error, CNODE_TYPE_INT);
     if (!hdf_get_obj(hdf, PRE_ERRMSG)) {
         hdf_set_valuef(hdf, "%s=%s:%d %s",
                        PRE_ERRMSG, neede->file, neede->lineno, neede->desc);

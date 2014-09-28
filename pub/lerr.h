@@ -13,8 +13,13 @@ extern NERR_TYPE LERR_MISS_TPL;
 extern NERR_TYPE LERR_ATTACK;
 extern NERR_TYPE LERR_REDIRECT;
 
-extern NERR_TYPE LERR_USERINPUT;
-extern NERR_TYPE LERR_IMGPROE;
+/*
+ * app error
+ */
+enum {
+    LERR_USERINPUT = 101,
+    LERR_IMGPROE
+};
 
 NEOERR* lerr_init();
 void lerr_opfinish_json(NEOERR *err, HDF *hdf);
