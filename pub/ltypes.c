@@ -1,8 +1,8 @@
 #include "mheads.h"
 #include "lheads.h"
 
-static char *m_browsers[4] = {"mozilla", "webkit", "opera", "msie"};
-static int   m_browsers_size = 4;
+static const char *m_browsers[4] = {"mozilla", "webkit", "opera", "msie"};
+static int m_browsers_size = 4;
 
 session_t* session_default()
 {
