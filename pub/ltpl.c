@@ -62,7 +62,8 @@ NEOERR* ltpl_parse_file(HASH *dbh, HASH *evth,
     HDF *node = NULL, *dhdf = NULL, *child = NULL, *thdf = NULL;
     CSPARSE *cs = NULL;
     STRING str;
-    char fname[_POSIX_PATH_MAX], tok[64], *outfile;
+    char fname[_POSIX_PATH_MAX], tok[64], *outfile, *trace_path, *temps;
+    char path_tpl[_POSIX_PATH_MAX], path_doc[_POSIX_PATH_MAX];
     NEOERR* (*data_handler)(HDF *hdf, HASH *dbh, HASH *evth);
     NEOERR *err;
 
@@ -73,6 +74,15 @@ NEOERR* ltpl_parse_file(HASH *dbh, HASH *evth,
 
     err = hdf_read_file(node, fname);
     if (err != STATUS_OK) return nerr_pass(err);
+
+    trace_path = hdf_get_value(g_cfg, PRE_CONFIG".trace_path", NULL);
+    if (!trace_path) trace_path = TC_ROOT;
+
+    temps = hdf_get_value(g_cfg, PRE_CONFIG".site_path", NULL);
+    if (!temps || *temps == '\0') temps = PATH_SITE;
+
+    snprintf(path_tpl, sizeof(path_tpl), "%s/%s", temps, PATH_TPL);
+    snprintf(path_doc, sizeof(path_doc), "%s/%s", temps, PATH_DOC);
 
     child = hdf_obj_child(node);
     while (child != NULL) {
@@ -109,7 +119,7 @@ NEOERR* ltpl_parse_file(HASH *dbh, HASH *evth,
         err = cs_init(&cs, dhdf);
         JUMP_NOK(err, wnext);
 
-        hdf_set_value(cs->hdf, "hdf.loadpaths.tpl", PATH_TPL);
+        hdf_set_value(cs->hdf, "hdf.loadpaths.tpl", path_tpl);
         hdf_set_value(cs->hdf, "hdf.loadpaths.local", dir);
 
         err = cgi_register_strfuncs(cs);
@@ -122,7 +132,7 @@ NEOERR* ltpl_parse_file(HASH *dbh, HASH *evth,
         JUMP_NOK(err, wnext);
 
         tpl = hdf_get_value(child, PRE_CFG_LAYOUT, "null.html");
-        snprintf(fname, sizeof(fname), "%s/%s", PATH_TPL, tpl);
+        snprintf(fname, sizeof(fname), "%s/%s", path_tpl, tpl);
         err = cs_parse_file(cs, fname);
         JUMP_NOK(err, wnext);
 
@@ -173,7 +183,7 @@ NEOERR* ltpl_parse_file(HASH *dbh, HASH *evth,
                 mutil_getdatetime(tm, sizeof(tm), val, 0);
                 outfile = mstr_repstr(1, outfile, "$ftime$", tm);
             }
-            snprintf(fname, sizeof(fname), PATH_DOC"%s", outfile);
+            snprintf(fname, sizeof(fname), "%s/%s", path_doc, outfile);
 
             /*
              * output file
@@ -185,7 +195,7 @@ NEOERR* ltpl_parse_file(HASH *dbh, HASH *evth,
             JUMP_NOK(err, wnext);
 #ifdef DEBUG_HDF
             snprintf(fname, sizeof(fname), "%s/hdf.%s",
-                     TC_ROOT, hdf_obj_name(child));
+                     trace_path, hdf_obj_name(child));
             hdf_write_file(child, fname);
 #endif
         }
@@ -241,11 +251,17 @@ NEOERR* ltpl_parse_dir(char *dir, HASH *outhash)
 NEOERR* ltpl_init(HASH **tplh, char *path)
 {
     HASH *ltplh = NULL;
+    char path_tpl[_POSIX_PATH_MAX], *temps;
     NEOERR *err;
 
     *tplh = NULL;
 
-    path = path ? path: PATH_TPL"config/run/";
+    temps = hdf_get_value(g_cfg, PRE_CONFIG".site_path", NULL);
+    if (!temps || *temps == '\0') temps = PATH_SITE;
+
+    snprintf(path_tpl, sizeof(path_tpl), "%s/%s/config/run/", temps, PATH_TPL);
+
+    path = path ? path: path_tpl;
 
     err = hash_init(&ltplh, hash_str_hash, hash_str_comp, hash_str_free);
     if (err != STATUS_OK) return nerr_pass(err);

@@ -17,7 +17,7 @@ NEOERR* zero_data_add(CGI *cgi, HASH *dbh, HASH *evth, session_t *ses)
 
     MCS_NOT_NULLB(cgi->hdf, evt);
 
-    hdf_set_value(cgi->hdf, PRE_OUTPUT".302=http://www.google.cn/");
+    hdf_set_valuef(cgi->hdf, PRE_OUTPUT".302=%s", "http://www.google.cn/");
 
     return nerr_raise(LERR_REDIRECT, "redirect");
 }

@@ -1,4 +1,6 @@
 Config {
+    site_path = /var/www/miad/
+    trace_path = /var/log/moon/miad/
     trace_level = 7
 }
 
@@ -28,6 +30,8 @@ Memcached {
     ip = 127.0.0.1
     port = 11211
 }
+
+MeventConfig = /etc/mevent/client.hdf
 
 Mevent {
     0 = skeleton

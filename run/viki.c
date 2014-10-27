@@ -15,7 +15,7 @@ int main(int argc, char **argv, char **envp)
 
     HASH *dbh, *tplh, *evth;
     session_t *session = NULL;
-    char *temps;
+    char *temps, *trace_path, path_tpl[_POSIX_PATH_MAX], fname[_POSIX_PATH_MAX];
     int http_max_upload;
 
     NEOERR* (*data_handler)(CGI *cgi, HASH *dbh, HASH *evth, session_t *session);
@@ -24,22 +24,35 @@ int main(int argc, char **argv, char **envp)
     //sleep(20);
     mutil_makesure_coredump();
 
-    err = mcfg_parse_file(SITE_CONFIG, &g_cfg);
+    /*
+     * argv[1] is viki's config file name
+     */
+    temps = argv[1] ? argv[1] : SITE_CONFIG;
+    err = mcfg_parse_file(temps, &g_cfg);
     DIE_NOK_CGI(err);
 
-    mtc_init(TC_ROOT"viki",
-             hdf_get_int_value(g_cfg, PRE_CONFIG".trace_level", TC_DEFAULT_LEVEL));
+    temps = hdf_get_value(g_cfg, PRE_CONFIG".site_path", NULL);
+    if (!temps || *temps == '\0') temps = PATH_SITE;
+    snprintf(path_tpl, sizeof(path_tpl), "%s/%s", temps, PATH_TPL);
+
+    trace_path = hdf_get_value(g_cfg, PRE_CONFIG".trace_path", NULL);
+    if (!trace_path || *trace_path == '\0') trace_path = TC_ROOT;
+    snprintf(fname, sizeof(fname), "%s/viki", trace_path);
+
+    mtc_init(fname, hdf_get_int_value(g_cfg, PRE_CONFIG".trace_level", TC_DEFAULT_LEVEL));
 
     err = lerr_init();
     DIE_NOK_CGI(err);
 
-    err = mtpl_set_tplpath(PATH_TPL);
+    err = mtpl_set_tplpath(path_tpl);
     DIE_NOK_CGI(err);
 
-    err = mtpl_InConfigRend_init(PATH_TPL"/config/email", "email", &g_datah);
+    snprintf(fname, sizeof(fname), "%s/config/email", path_tpl);
+    err = mtpl_InConfigRend_init(fname, "email", &g_datah);
     DIE_NOK_CGI(err);
 
-    err = mtpl_InConfigRend_init(PATH_TPL"/config/inbox", "inbox", &g_datah);
+    snprintf(fname, sizeof(fname), "%s/config/inbox", path_tpl);
+    err = mtpl_InConfigRend_init(fname, "inbox", &g_datah);
     DIE_NOK_CGI(err);
 
     err = ltpl_init(&tplh, NULL);
@@ -164,7 +177,8 @@ int main(int argc, char **argv, char **envp)
 
         resp_done:
 #ifdef DEBUG_HDF
-            hdf_write_file(cgi->hdf, TC_ROOT"hdf.viki");
+            snprintf(fname, sizeof(fname), "%s/hdf.viki", trace_path);
+            hdf_write_file(fname, TC_ROOT"hdf.viki");
 #endif
 
             cgi_destroy(&cgi);

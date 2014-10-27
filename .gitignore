@@ -6,3 +6,6 @@
 .depend
 cscope.files
 cscope.out
+
+# 开发人员配置文件
+*-dev-*.hdf

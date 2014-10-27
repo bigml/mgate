@@ -14,13 +14,18 @@ __BEGIN_DECLS
 #define ROOT_DATA       "/var/www/voov/fly/data/"
 #define ROOT_IMG        ROOT_DATA"images/"
 
+/*
+ * SITE_CONFIG 可以在命令行指定
+ * PATH_SITE 可以在配置文件中通过"Config.site_path"指定
+ * PATH_XXX 首先以配置文件中Config.site_path/PATH_XXX为准，否则使用默认配置 PATH_SITE/PATH_XXX
+ */
 #define PATH_SITE   "/var/www/voov/"
 #define SITE_CONFIG PATH_SITE"config.hdf"
-#define PATH_DOC    PATH_SITE"fly/"
-#define PATH_CGI    PATH_SITE"run/"
-#define PATH_TPL    PATH_SITE"tpl/"
-#define PATH_MTL    PATH_SITE"mtl/"
-#define PATH_PAGER  PATH_SITE"pager/"
+#define PATH_DOC    "fly/"
+#define PATH_CGI    "run/"
+#define PATH_TPL    "tpl/"
+#define PATH_MTL    "mtl/"
+#define PATH_PAGER  "pager/"
 
 #define PRE_REQ_IP      PRE_CGI".RemoteAddress"
 #define PRE_REQ_URI     PRE_CGI".ScriptName"    /* lutil_file_access() */
