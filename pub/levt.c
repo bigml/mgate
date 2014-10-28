@@ -4,7 +4,7 @@
 NEOERR* levt_init(HASH **evth)
 {
     mevent_t *evt;
-    char *ename;
+    char *ename, *fname;
     HDF *node;
     HASH *levth;
     NEOERR *err;
@@ -15,10 +15,12 @@ NEOERR* levt_init(HASH **evth)
     err = hash_init(&levth, hash_str_hash, hash_str_comp, hash_str_free);
     if (err != STATUS_OK) return nerr_pass(err);
 
+    fname = hdf_get_value(g_cfg, "MeventConfig", NULL);
+
     node = hdf_obj_child(node);
     while (node != NULL) {
         ename = hdf_obj_value(node);
-        evt = mevent_init_plugin(ename);
+        evt = mevent_init_plugin(ename, fname);
         if (evt) {
             mtc_dbg("event %s init ok", ename);
             hash_insert(levth, (void*)strdup(ename), (void*)evt);
