@@ -2,6 +2,10 @@
  * viki 主脑
  */
 
+#ifdef USE_FASTCGI
+#include "fcgi_stdio.h"
+#endif
+
 #include "mheads.h"
 #include "lheads.h"
 
