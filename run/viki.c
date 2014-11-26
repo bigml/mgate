@@ -182,7 +182,7 @@ int main(int argc, char **argv, char **envp)
         resp_done:
 #ifdef DEBUG_HDF
             snprintf(fname, sizeof(fname), "%s/hdf.viki", trace_path);
-            hdf_write_file(fname, TC_ROOT"hdf.viki");
+            hdf_write_file(cgi->hdf, fname);
 #endif
 
             cgi_destroy(&cgi);
