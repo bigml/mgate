@@ -10,6 +10,7 @@
 #include "lcfg.h"
 #include "lutil.h"
 #include "ltpl.h"
+#include "ldml.h"
 
 #include "mevent.h"
 

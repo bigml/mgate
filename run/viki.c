@@ -17,7 +17,7 @@ int main(int argc, char **argv, char **envp)
     CGI *cgi;
     NEOERR *err = STATUS_OK;
 
-    HASH *dbh, *tplh, *evth;
+    HASH *dbh, *tplh, *evth, *datah;
     session_t *session = NULL;
     char *temps, *trace_path, path_tpl[_POSIX_PATH_MAX], fname[_POSIX_PATH_MAX];
     int http_max_upload;
@@ -61,8 +61,12 @@ int main(int argc, char **argv, char **envp)
 
     err = ltpl_init(&tplh, NULL);
     DIE_NOK_CGI(err);
-
     err = hash_insert(g_datah, "runtime_templates", (void*)tplh);
+    DIE_NOK_CGI(err);
+
+    err = ldml_init(&datah, NULL);
+    DIE_NOK_CGI(err);
+    err = hash_insert(g_datah, "runtime_dml", (void*)datah);
     DIE_NOK_CGI(err);
 
     err = ldb_init(&dbh);
@@ -124,6 +128,7 @@ int main(int argc, char **argv, char **envp)
 
     response:
         if (cgi != NULL && cgi->hdf != NULL) {
+
             /*
              * handle uri redirect
              */
@@ -143,6 +148,7 @@ int main(int argc, char **argv, char **envp)
             if (!session) session = session_default();
             switch (session->reqtype) {
             case CGI_REQ_HTML:
+
                 err = ltpl_render(cgi, tplh, session);
                 if (err != STATUS_OK) {
                     SAFE_FREE(session->render);
@@ -184,7 +190,6 @@ int main(int argc, char **argv, char **envp)
             snprintf(fname, sizeof(fname), "%s/hdf.viki", trace_path);
             hdf_write_file(cgi->hdf, fname);
 #endif
-
             cgi_destroy(&cgi);
             session_destroy(&session);
             cgi = NULL;
@@ -197,6 +202,7 @@ int main(int argc, char **argv, char **envp)
     levt_destroy(evth);
     ldb_destroy(dbh);
     ltpl_destroy(tplh);
+    ldml_destroy(datah);
     mtpl_InConfigRend_destroy(g_datah);
     mcfg_cleanup(&g_cfg);
 

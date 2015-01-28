@@ -21,11 +21,21 @@ __BEGIN_DECLS
  */
 #define PATH_SITE   "/var/www/voov/"
 #define SITE_CONFIG PATH_SITE"config.hdf"
-#define PATH_DOC    "fly/"
-#define PATH_CGI    "run/"
-#define PATH_TPL    "tpl/"
-#define PATH_MTL    "mtl/"
+
+#define PATH_MODE   "walk/"     /* modler */
+#define PATH_CGI    "run/"      /* controller */
+#define PATH_DOC    "fly/"      /* viewer */
+
+#define PATH_MTL    "mtl/"      /* operation tools */
+#define PATH_TPL    "tpl/"      /* template */
+#define PATH_DATA   "dml/"      /* data modifier */
+
 #define PATH_PAGER  "pager/"
+/* pub */
+/* mevent */
+/* xport */
+/* lab */
+/* doc */
 
 #define PRE_REQ_IP      PRE_CGI".RemoteAddress"
 #define PRE_REQ_URI     PRE_CGI".ScriptName"    /* lutil_file_access() */

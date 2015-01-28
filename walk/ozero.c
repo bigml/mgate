@@ -5,8 +5,12 @@
 NEOERR* zero_data_get(CGI *cgi, HASH *dbh, HASH *evth, session_t *ses)
 {
     mevent_t *evt = hash_lookup(evth, "aic");
+    NEOERR *err;
 
     MCS_NOT_NULLB(cgi->hdf, evt);
+
+    err = ldml_render("zero", "video", cgi->hdf, mcs_fetch_nodef(cgi->hdf, PRE_OUTPUT));
+    if (err != STATUS_OK) return nerr_pass(err);
 
     return STATUS_OK;
 }

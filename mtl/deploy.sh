@@ -56,6 +56,7 @@ do
 mkdir -p ${SITE_PATH}/tpl
 mkdir -p ${SITE_PATH}/run
 mkdir -p ${SITE_PATH}/fly
+mkdir -p ${SITE_PATH}/dml
 mkdir -p /etc/mevent
 mkdir -p /var/www && cd /var/www && ln -s ${SITE_PATH} ${SITE_NAME}
 if ! grep '/usr/local/lib' /etc/ld.so.conf > /dev/null 2>&1
@@ -76,6 +77,7 @@ EOF
         echo "binary ..."
         rsync -rl ${SITE_PATH}/tpl root@$i:${SITE_PATH}/
         rsync -rl ${SITE_PATH}/fly root@$i:${SITE_PATH}/
+        rsync -rl ${SITE_PATH}/dml root@$i:${SITE_PATH}/
         rsync ${SITE_PATH}/run/viki root@$i:${SITE_PATH}/run/viki
     fi
 
